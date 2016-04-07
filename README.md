@@ -1,6 +1,13 @@
 # SwiftStringScore
 SwiftStringScore is a swift extension which provides super fast fuzzy string matching/scoring. Based on the JavaScript library "string_score" by Joshaven Potter.
 
+
+## Usage
+
+Just add the `String+Score.swift` file into your swift project and you're ready to go!
+
+
+## Examples
 ```
 "hello world".scoreAgainst("axl") // => 0
 "hello world".scoreAgainst("ow") // => 0.3545455

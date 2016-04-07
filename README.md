@@ -53,7 +53,7 @@ Just add the `String+Score.swift` file into your swift project and you're ready 
 
 // Unicode supported
 "🐱".scoreAgainst("🐱") // => 1
-"🐱".scoreAgainst("🙃") // => 0
+"🐱".scoreAgainst("🐼") // => 0
 "🐱🙃".scoreAgainst("🙃") // => 0.15
 "🐱🙃".scoreAgainst("🐱") // => 0.75
 ```

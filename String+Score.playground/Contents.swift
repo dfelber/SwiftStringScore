@@ -60,8 +60,10 @@ extension String
         
         for (index, character) in otherString.characters.enumerate()
         {
+            let range = workingString.startIndex..<workingString.endIndex
+            let indexInString = workingString.rangeOfString("\(character)", options: .CaseInsensitiveSearch, range: range, locale: nil)
+            
             var characterScore: Float = 0.1
-            let indexInString = workingString.rangeOfString("\(character)", options: .CaseInsensitiveSearch, range: workingString.startIndex..<workingString.endIndex, locale: nil)
             
             if let indexInString = indexInString {
                 // Same case bonus

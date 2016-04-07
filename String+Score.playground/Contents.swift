@@ -170,6 +170,6 @@ extension String
 
 // Unicode supported
 "🐱".scoreAgainst("🐱") // => 1
-"🐱".scoreAgainst("🙃") // => 0
+"🐱".scoreAgainst("🐼") // => 0
 "🐱🙃".scoreAgainst("🙃") // => 0.15
 "🐱🙃".scoreAgainst("🐱") // => 0.75

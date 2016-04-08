@@ -4,12 +4,13 @@ SwiftStringScore is a swift extension which provides super fast fuzzy string mat
 Based on the Objective-C implementation of Nicholas Bruning [https://github.com/thetron/StringScore](https://github.com/thetron/StringScore)  
 and the original JavaScript implementation of Joshaven Potter [https://github.com/joshaven/string_score](https://github.com/joshaven/string_score)
 
-Works with swift 2.2 or newer.
+Works with Swift 2+
 
 
 ## Usage
 
-Just add the `String+Score.swift` file into your swift project and you're ready to go!
+Just add the `String+Score.swift` file into your swift project and you're ready to go!  
+You can also use the **playground** in the Xcode Workspace to play around with the scoring.
 
 
 ## Examples

@@ -12,9 +12,9 @@ import Foundation
 
 
 enum StringScoreOption {
-    case None
-    case FavorSmallerWords
-    case ReducedLongStringPenalty
+    case none
+    case favorSmallerWords
+    case reducedLongStringPenalty
 }
 
 
@@ -23,12 +23,14 @@ extension String
     /// Calculates a score describing how good two strings match.
     /// (0 => no match / 1 => perfect match)
     ///
-    /// - parameter otherString:    The string to compare to
-    /// - parameter fuzziness:      How fuzzy the matching calculation is (0...1)
-    /// - parameter option:         Optional comparison options
-    /// - returns:                  A Float in the range of 0...1
+    /// - Parameters:
+    ///   - otherString: The string to compare to
+    ///   - fuzziness: How fuzzy the matching calculation is (0...1)
+    ///   - option: Optional comparison options
     ///
-    func scoreAgainst(otherString: String, fuzziness: Float? = nil, option: StringScoreOption = .None) -> Float
+    /// - Returns: A Float in the range of 0...1
+    ///
+    func scoreAgainst(_ otherString: String, fuzziness: Float = 0, option: StringScoreOption = .none) -> Float
     {
         // Both strings are identical
         if self == otherString {
@@ -51,28 +53,23 @@ extension String
         var startOfStringBonus = false
         
         // Ensure that the fuzziness is in the range of 0...1
-        var fuzzyFactor = fuzziness
-        if let f = fuzzyFactor {
-            fuzzyFactor = 1 - max(min(1.0, f), 0.0)
-        }
+        let fuzzyFactor = 1 - max(min(1.0, fuzziness), 0.0)
         
-        
-        for (index, character) in otherString.characters.enumerate()
-        {
-            let range = workingString.startIndex..<workingString.endIndex
-            let indexInString = workingString.rangeOfString("\(character)", options: .CaseInsensitiveSearch, range: range, locale: nil)
-            
+        for (index, character) in otherString.characters.enumerated() {
+            let range = workingString.characters.indices.startIndex ..< workingString.characters.indices.endIndex
+            let indexInString = workingString.range(of: "\(character)", options: .caseInsensitive, range: range, locale: nil)
+
             var characterScore: Float = 0.1
             
             if let indexInString = indexInString {
                 // Same case bonus
-                let char = workingString.characters[indexInString.startIndex]
+                let char = workingString.characters[indexInString.lowerBound]
                 if character == char {
                     characterScore += 0.1
                 }
                 
                 // Consecutive letter & start-of-string bonus
-                if indexInString.startIndex == otherString.startIndex {
+                if indexInString.lowerBound == otherString.startIndex {
                     // Increase the score when matching first character of the remainder of the string
                     characterScore += 0.6
                     
@@ -86,16 +83,21 @@ extension String
                     // Acronym Bonus
                     // Weighing Logic: Typing the first character of an acronym is as if you
                     // preceded it with two perfect character matches.
-                    if workingString.substringWithRange(indexInString.startIndex.advancedBy(-1)..<indexInString.endIndex.advancedBy(-1)) == " " {
+                    let lowerBound = workingString.index(before: indexInString.lowerBound)
+                    let upperBound = workingString.index(before: indexInString.upperBound)
+
+                    if workingString.substring(with: lowerBound ..< upperBound) == " " {
                         characterScore += 0.8
                     }
                 }
                 
                 // Left trim the already matched part of the string
                 // (forces sequential matching).
-                workingString = workingString.substringFromIndex(indexInString.startIndex.advancedBy(1))
+                let lowerBound = workingString.index(after: indexInString.lowerBound)
+
+                workingString = workingString.substring(from: lowerBound)
             } else {
-                if let fuzzyFactor = fuzzyFactor {
+                if fuzziness > 0 {
                     fuzzies += fuzzyFactor
                 } else {
                     return 0
@@ -105,14 +107,14 @@ extension String
             totalCharacterScore += characterScore
         }
         
-        if option == .FavorSmallerWords {
+        if option == .favorSmallerWords {
             // Weigh smaller words higher
             return totalCharacterScore / stringLength
         }
         
         otherStringScore = totalCharacterScore / otherStringLength
         
-        if option == .ReducedLongStringPenalty {
+        if option == .reducedLongStringPenalty {
             // Reduce the penalty for longer words
             let percentageOfMatchedString = otherStringLength / stringLength
             let wordScore = otherStringScore * percentageOfMatchedString

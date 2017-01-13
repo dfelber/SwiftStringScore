@@ -21,7 +21,7 @@ class SwiftStringScoreTests: XCTestCase
         
         // Single letter match
         XCTAssert("hello world".scoreAgainst("e").aboutEqual(0.1090909))
-        
+
         // Single letter match plus bonuses for beginning of word and beginning of phrase
         XCTAssert("hello world".scoreAgainst("h").aboutEqual(0.5863637))
         XCTAssert("hello world".scoreAgainst("w").aboutEqual(0.5454546))
@@ -35,8 +35,8 @@ class SwiftStringScoreTests: XCTestCase
         XCTAssert("hello world".scoreAgainst("hello wo").aboutEqual(0.8409091))
         XCTAssert("hello world".scoreAgainst("hello wor").aboutEqual(0.8772728))
         XCTAssert("hello world".scoreAgainst("hello worl").aboutEqual(0.9136364))
-        XCTAssert("hello world".scoreAgainst("hello world") == 1.0)
-        
+        XCTAssert("hello world".scoreAgainst("hello world") == 1)
+
         // Using a "1" in place of an "l" is a mismatch unless the score is fuzzy
         XCTAssert("hello world".scoreAgainst("hello wor1") == 0)
         XCTAssert("hello world".scoreAgainst("hello wor1", fuzziness: 0.5).aboutEqual(0.6145455))
@@ -56,15 +56,15 @@ class SwiftStringScoreTests: XCTestCase
         // Unicode supported
         XCTAssert("🐱".scoreAgainst("🐱") == 1)
         XCTAssert("🐱".scoreAgainst("🐼") == 0)
-        XCTAssert("🐱🙃".scoreAgainst("🙃") == 0.15)
-        XCTAssert("🐱🙃".scoreAgainst("🐱") == 0.75)
+        XCTAssert("🐱🙃".scoreAgainst("🙃").aboutEqual(0.15))
+        XCTAssert("🐱🙃".scoreAgainst("🐱").aboutEqual(0.75))
     }
 }
 
 
 extension Float
 {
-    func aboutEqual(b: Float, maxDiff: Float = 0.0001) -> Bool
+    func aboutEqual(_ b: Float, maxDiff: Float = 0.0001) -> Bool
     {
         return abs(self - b) < maxDiff
     }
